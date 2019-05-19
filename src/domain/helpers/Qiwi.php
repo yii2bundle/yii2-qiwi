@@ -2,6 +2,8 @@
 
 namespace yii2bundle\qiwi\domain\helpers;
 
+use yii2mod\helpers\ArrayHelper;
+
 class Qiwi {
 	
 	private $_phone;
@@ -15,7 +17,6 @@ class Qiwi {
 	}
 	
 	private function sendRequest($method, array $content = [], $post = false) {
-		//d('sendRequest');
 		$ch = curl_init();
 		if($post) {
 			curl_setopt($ch, CURLOPT_URL, $this->_url . $method);
@@ -34,6 +35,29 @@ class Qiwi {
 		$result = curl_exec($ch);
 		curl_close($ch);
 		return json_decode($result, 1);
+	}
+	
+	private function getCollectionPart($uri, Array $params = []) {
+		$collection = $this->sendRequest($uri, $params);
+		$items = ArrayHelper::getValue($collection, 'items', []);
+		return $items;
+	}
+	
+	public function getCollection($uri, Array $params = []) {
+		$collection = [];
+		$limit = ArrayHelper::getValue($params, 'limit', 20);
+		if($limit > 100) {
+			$params['limit'] = 100;
+			do {
+				$items = $this->getCollectionPart($uri, $params);
+				$lastItem = ArrayHelper::last($items);
+				$params['lastItemId'] = $lastItem['id'];
+				$collection = array_merge($collection, $items);
+			} while(count($items));
+		} else {
+			$collection = $this->getCollectionPart($uri, $params);
+		}
+		return $collection;
 	}
 	
 	public function getCatalog($country, $category, Array $params = []) {

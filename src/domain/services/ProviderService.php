@@ -20,7 +20,8 @@ use yii2bundle\qiwi\domain\mappers\ProviderMapper;
  */
 class ProviderService extends BaseActiveService implements ProviderInterface {
 	
-	public function updateAllCahceByCategory(CategoryEntity $categoryEntity) {
+	public function updateAllCahceByCategoryId($categoryId) {
+		$categoryEntity = \App::$domain->qiwi->category->oneById($categoryId);
 		$providerApiRepository = RepositoryFactoryHelper::createObject('provider', 'api', \App::$domain->qiwi);
 		/** @var ProviderEntity[] $collection */
 		$collection = $providerApiRepository->allByCategory($categoryEntity);

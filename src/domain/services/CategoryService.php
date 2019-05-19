@@ -28,8 +28,7 @@ class CategoryService extends BaseActiveService implements CategoryInterface {
 		$collection = $categoryApiRepository->all();
 		foreach($collection as $categoryEntity) {
 			$this->insertEntity($categoryEntity);
-			\App::$domain->qiwi->provider->updateAllCahceByCategory($categoryEntity);
-			d($categoryEntity);
+			\App::$domain->qiwi->provider->updateAllCahceByCategoryId($categoryEntity->id);
 		}
 		return $collection;
 	}

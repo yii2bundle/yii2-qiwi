@@ -2,6 +2,7 @@
 
 namespace yii2bundle\qiwi\domain\repositories\api;
 
+use yii2mod\helpers\ArrayHelper;
 use yii2rails\domain\BaseEntity;
 use yii2rails\domain\data\Query;
 use yii2rails\domain\exceptions\UnprocessableEntityHttpException;
@@ -28,20 +29,25 @@ class ProviderRepository extends BaseRepository implements ProviderInterface {
 	}
 	
 	public function allByCategory(CategoryEntity $categoryEntity, Query $query = null) {
-		$qiwi = \App::$domain->qiwi->person->getQiwiInstance();
-		$personEntity = \App::$domain->qiwi->person->getPerson();
-		$providers = $qiwi->getCatalog($personEntity->country_code, $categoryEntity->alias);
+		$providers = $this->getAllItems($categoryEntity->alias);
 		$ProviderMapper = new ProviderMapper;
 		$collection = [];
-		foreach($providers['items'] as $ProviderArray) {
+		foreach($providers as $ProviderArray) {
 			$providerEntity = new ProviderEntity;
 			$decoded = $ProviderMapper->decode($ProviderArray);
 			$providerEntity->load($decoded);
 			$providerEntity->category_id = $categoryEntity->id;
 			$collection[] = $providerEntity;
-			//$this->insertEntity($providerEntity);
 		}
 		return $collection;
+	}
+	
+	private function getAllItems($categoryAlias) {
+		$qiwi = \App::$domain->qiwi->person->getQiwiInstance();
+		$personEntity = \App::$domain->qiwi->person->getPerson();
+		$uri = 'providers-catalog/v2/catalogs/' . $personEntity->country_code . '/categories/' . $categoryAlias;
+		$providers = $qiwi->getCollection($uri, ['limit' => 1000000]);
+		return $providers;
 	}
 	
 	public function all(Query $query = null) {
