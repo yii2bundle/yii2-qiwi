@@ -51,6 +51,9 @@ class Qiwi {
 			do {
 				$items = $this->getCollectionPart($uri, $params);
 				$lastItem = ArrayHelper::last($items);
+				/*if($params['lastItemId'] == $lastItem['id']) {
+					break;
+				}*/
 				$params['lastItemId'] = $lastItem['id'];
 				$collection = array_merge($collection, $items);
 			} while(count($items));

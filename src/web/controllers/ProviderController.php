@@ -3,6 +3,7 @@
 namespace yii2bundle\qiwi\web\controllers;
 
 use yii\web\Controller;
+use yii2bundle\qiwi\domain\forms\PaymentForm;
 use yii2rails\domain\data\Query;
 
 class ProviderController extends Controller
@@ -20,5 +21,15 @@ class ProviderController extends Controller
 			'providerDataProvider' => $providerDataProvider,
 		]);
 	}
-
+	
+	public function actionView($id)
+	{
+		$providerEntity = \App::$domain->qiwi->provider->oneById($id);
+		$model = new PaymentForm;
+		return $this->render('view', [
+			'providerEntity' => $providerEntity,
+			'model' => $model,
+		]);
+	}
+	
 }

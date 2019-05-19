@@ -13,7 +13,7 @@ $providerCollection = $providerDataProvider->getModels();
 <div class="welcome-index">
 
     <h2>
-		<?= $this->title ?>
+		<?= \yii\helpers\Html::img($categoryEntity->logo_url, ['height' => '48px']) . SPC . $this->title ?>
     </h2>
     
 	<?php foreach($providerCollection as $providerEntity) { ?>

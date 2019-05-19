@@ -21,17 +21,11 @@ class CategoryRepository extends BaseRepository implements CategoryInterface {
 	
 	protected $schemaClass = true;
 	
-	public function oneById($id, Query $query = null) {
-	
-	}
-	
 	public function all(Query $query = null) {
-		$qiwi = \App::$domain->qiwi->person->getQiwiInstance();
-		$personEntity = \App::$domain->qiwi->person->getPerson();
-		$catalogs = $qiwi->getCatalogs($personEntity->country_code);
+		$catalogs = $this->getAllItems();
 		$categoryMapper = new CategoryMapper;
 		$collection = [];
-		foreach($catalogs['items'] as $categoryArray) {
+		foreach($catalogs as $categoryArray) {
 			$categoryEntity = new CategoryEntity;
 			$decoded = $categoryMapper->decode($categoryArray);
 			$categoryEntity->load($decoded);
@@ -39,6 +33,18 @@ class CategoryRepository extends BaseRepository implements CategoryInterface {
 			$collection[] = $categoryEntity;
 		}
 		return $collection;
+	}
+	
+	private function getAllItems() {
+		$qiwi = \App::$domain->qiwi->person->getQiwiInstance();
+		$personEntity = \App::$domain->qiwi->person->getPerson();
+		$uri = 'providers-catalog/v2/catalogs/' . $personEntity->country_code;
+		$categories = $qiwi->getCollection($uri, ['limit' => 100]);
+		return $categories;
+	}
+	
+	public function oneById($id, Query $query = null) {
+	
 	}
 	
 	public function count(Query $query = null) {

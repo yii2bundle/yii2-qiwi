@@ -36,7 +36,8 @@ class ManageController extends Controller
 		
 		\App::$domain->qiwi->person->auth('77783177384', 'b233d83635d03c870ef492e72bd46009');
 		
-		
+		/*$categories = \App::$domain->qiwi->provider->updateAllCahceByCategoryId(26);
+		d($categories);*/
 		
 		$categories = \App::$domain->qiwi->category->updateAllCahce();
 		d($categories);

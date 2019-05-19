@@ -24,10 +24,6 @@ class ProviderRepository extends BaseRepository implements ProviderInterface {
 	
 	protected $schemaClass = true;
 	
-	public function oneById($id, Query $query = null) {
-	
-	}
-	
 	public function allByCategory(CategoryEntity $categoryEntity, Query $query = null) {
 		$providers = $this->getAllItems($categoryEntity->alias);
 		$ProviderMapper = new ProviderMapper;
@@ -48,6 +44,10 @@ class ProviderRepository extends BaseRepository implements ProviderInterface {
 		$uri = 'providers-catalog/v2/catalogs/' . $personEntity->country_code . '/categories/' . $categoryAlias;
 		$providers = $qiwi->getCollection($uri, ['limit' => 1000000]);
 		return $providers;
+	}
+	
+	public function oneById($id, Query $query = null) {
+	
 	}
 	
 	public function all(Query $query = null) {
