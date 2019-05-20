@@ -22,6 +22,7 @@ class CategoryRepository extends BaseRepository implements CategoryInterface {
 	protected $schemaClass = true;
 	
 	public function all(Query $query = null) {
+        $personEntity = \App::$domain->qiwi->person->getPerson();
 		$catalogs = $this->getAllItems();
 		$categoryMapper = new CategoryMapper;
 		$collection = [];
