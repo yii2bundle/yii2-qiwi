@@ -32,9 +32,7 @@ class ManageController extends Controller
 		d($data2);*/
 		
 		// https://github.com/Shnapik/Qiwi-Api-Class-PHP
-		//$qiwi = new Qiwi('77783177384', 'b233d83635d03c870ef492e72bd46009');
-		
-		\App::$domain->qiwi->person->auth('77783177384', 'b233d83635d03c870ef492e72bd46009');
+
 		
 		/*$categories = \App::$domain->qiwi->provider->updateAllCahceByCategoryId(26);
 		d($categories);*/

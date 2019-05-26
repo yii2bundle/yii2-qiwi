@@ -16,7 +16,7 @@ use yii2bundle\qiwi\domain\helpers\Qiwi;
  */
 interface PersonInterface extends CrudInterface {
 	
-	public function auth($id, $token);
+	//public function auth($id, $token);
 	public function getPerson() : PersonEntity;
 	public function getQiwiInstance() : Qiwi;
 	

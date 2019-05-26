@@ -23,7 +23,6 @@ use yii2rails\extension\common\helpers\Helper;
 class PaymentService extends BaseService implements PaymentInterface {
 
     public function pay(PaymentEntity $paymentEntity) {
-        \App::$domain->qiwi->person->auth('77783177384', 'b233d83635d03c870ef492e72bd46009');
         if($paymentEntity->currency_id == null) {
             $paymentEntity->currency_id = \App::$domain->qiwi->person->getPerson()->default_currency_id;
         }

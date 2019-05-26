@@ -18,7 +18,6 @@ use yii2rails\domain\services\base\BaseActiveService;
 class HistoryService extends BaseActiveService implements HistoryInterface {
 
     public function oneById($txnId, Query $query = null) {
-        \App::$domain->qiwi->person->auth('77783177384', 'b233d83635d03c870ef492e72bd46009');
         $historyItem = \App::$domain->qiwi->person->getQiwiInstance()->getTxn($txnId);
 
         $hitoryEntity = new HistoryEntity;

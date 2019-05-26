@@ -2,8 +2,10 @@
 
 namespace yii2bundle\qiwi\domain\services;
 
+use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
+use yii2rails\app\domain\helpers\EnvService;
 use yii2rails\domain\helpers\factory\RepositoryFactoryHelper;
 use yii2bundle\qiwi\domain\entities\PersonEntity;
 use yii2bundle\qiwi\domain\interfaces\services\PersonInterface;
@@ -25,7 +27,7 @@ class PersonService extends BaseActiveService implements PersonInterface {
 	private $personId = null;
 	private $personEntity = null;
 	
-	public function auth($id, $token) {
+	private function auth($id, $token) {
 		$this->qiwiInstance = new Qiwi($id, $token);
 		$this->personId = $id;
 	}
@@ -44,7 +46,12 @@ class PersonService extends BaseActiveService implements PersonInterface {
 	
 	public function getQiwiInstance() : Qiwi {
 		if(!$this->qiwiInstance instanceof Qiwi) {
-			throw new UnauthorizedHttpException('Qiwi person unauthorized!');
+            $accessConfig = EnvService::get('qiwi');
+            if(empty($accessConfig)) {
+                throw new InvalidConfigException('Payment system "Qiwi" not configured!');
+            }
+            $this->auth($accessConfig['login'], $accessConfig['token']);
+			//throw new UnauthorizedHttpException('Qiwi person unauthorized!');
 		}
 		return $this->qiwiInstance;
 	}
