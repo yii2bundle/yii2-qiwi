@@ -33,6 +33,12 @@ class Qiwi {
 		]);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$result = curl_exec($ch);
+
+        $errorNumber = curl_errno($ch);
+        $errorMessage = curl_error($ch);
+
+        //d($errorNumber);
+
 		curl_close($ch);
 		return json_decode($result, 1);
 	}
@@ -96,7 +102,7 @@ class Qiwi {
 	}
 	
 	public function getTax($providerId) {
-		return $this->sendRequest('sinap/providers/' . $providerId . '/form');
+		return $this->sendRequest('sinap/providers/' . $providerId);
 	}
 	
 	public function sendMoneyToQiwi(Array $params = []) {

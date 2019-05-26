@@ -12,6 +12,7 @@ use yii2rails\domain\enums\Driver;
  * @property-read \yii2bundle\qiwi\domain\interfaces\services\ProviderInterface $provider
  * @property-read \yii2bundle\qiwi\domain\interfaces\services\CategoryInterface $category
  * @property-read \yii2bundle\qiwi\domain\interfaces\services\PersonInterface $person
+ * @property-read \yii2bundle\qiwi\domain\interfaces\services\PaymentInterface $payment
  */
 class Domain extends \yii2rails\domain\Domain {
 	
@@ -22,12 +23,14 @@ class Domain extends \yii2rails\domain\Domain {
 				'provider' => Driver::ACTIVE_RECORD,
 				'category' => Driver::ACTIVE_RECORD,
 				'person' => Driver::ACTIVE_RECORD,
+                'payment' => Driver::API,
 			],
 			'services' => [
                 'history',
 				'provider',
 				'category',
 				'person',
+                'payment',
 			],
 		];
 	}
