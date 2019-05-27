@@ -2,6 +2,8 @@
 
 namespace yii2bundle\qiwi\domain\helpers;
 
+use yii\web\NotFoundHttpException;
+use yii\web\ServerErrorHttpException;
 use yii2mod\helpers\ArrayHelper;
 
 class Qiwi {
@@ -33,16 +35,36 @@ class Qiwi {
 		]);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$result = curl_exec($ch);
-
         $errorNumber = curl_errno($ch);
         $errorMessage = curl_error($ch);
-
-        //d($errorNumber);
-
 		curl_close($ch);
-		return json_decode($result, 1);
+		$body = json_decode($result, 1);
+
+        //d($body);
+
+		if(!empty($body['traceId'])) {
+            $this->showError($body);
+        }
+
+		return $body;
 	}
-	
+
+	private function showError($body) {
+	    /*
+        'serviceName' => 'payment-history',
+        'errorCode' => 'payment.history.not.found',
+        'description' => 'Payment history not found',
+        'userMessage' => 'Payment history not found',
+        'dateTime' => '2019-05-27T08:13:03.164+03:00',
+        'traceId' => '19f0ec88abdf4c28',
+	    */
+        if(mb_strpos($body['errorCode'], 'not.found')) {
+            throw new NotFoundHttpException($body['userMessage']);
+        }
+        //d($body);
+        throw new ServerErrorHttpException($body['userMessage']);
+    }
+
 	private function getCollectionPart($uri, Array $params = []) {
 		$collection = $this->sendRequest($uri, $params);
 		$items = ArrayHelper::getValue($collection, 'items', []);

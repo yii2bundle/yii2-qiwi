@@ -2,6 +2,8 @@
 
 namespace yii2bundle\qiwi\domain\services;
 
+use yii\base\InvalidArgumentException;
+use yii\web\NotFoundHttpException;
 use yii2bundle\qiwi\domain\entities\HistoryEntity;
 use yii2bundle\qiwi\domain\interfaces\services\HistoryInterface;
 use yii2rails\domain\data\Query;
@@ -18,8 +20,15 @@ use yii2rails\domain\services\base\BaseActiveService;
 class HistoryService extends BaseActiveService implements HistoryInterface {
 
     public function oneById($txnId, Query $query = null) {
-        $historyItem = \App::$domain->qiwi->person->getQiwiInstance()->getTxn($txnId);
+        if(empty($txnId)) {
+            throw new InvalidArgumentException('Empty "txnId"');
+        }
 
+        $historyItem = \App::$domain->qiwi->person->getQiwiInstance()->getTxn($txnId);
+        //d($historyItem);
+        if(empty($historyItem['txnId'])) {
+            throw new NotFoundHttpException('Operation not found!');
+        }
         $hitoryEntity = new HistoryEntity;
         $hitoryEntity->txn_id = $historyItem['txnId'];
         $hitoryEntity->trm_txn_id = $historyItem['trmTxnId'];
@@ -35,7 +44,6 @@ class HistoryService extends BaseActiveService implements HistoryInterface {
         $hitoryEntity->comment = $historyItem['comment'];
         $hitoryEntity->status = $historyItem['status'];
         $hitoryEntity->created_at = $historyItem['date'];
-
         return $hitoryEntity;
     }
 
