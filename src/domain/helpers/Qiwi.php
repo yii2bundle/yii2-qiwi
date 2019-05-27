@@ -126,7 +126,11 @@ class Qiwi {
 	public function getTax($providerId) {
 		return $this->sendRequest('sinap/providers/' . $providerId);
 	}
-	
+
+    public function getComission($providerId, Array $params = []) {
+        return $this->sendRequest('sinap/providers/'.$providerId.'/onlineCommission', $params, 1);
+    }
+
 	public function sendMoneyToQiwi(Array $params = []) {
 		return $this->sendRequest('sinap/api/v2/terms/99/payments', $params, 1);
 	}
