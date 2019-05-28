@@ -4,6 +4,8 @@ namespace yii2bundle\qiwi\domain\helpers;
 
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
+use yii2lab\rest\domain\entities\RequestEntity;
+use yii2lab\rest\domain\helpers\RestHelper;
 use yii2mod\helpers\ArrayHelper;
 
 class Qiwi {
@@ -17,7 +19,36 @@ class Qiwi {
 		$this->_token = $token;
 		$this->_url = 'https://edge.qiwi.com/';
 	}
-	
+
+    private function __sendRequest($method, array $content = [], $post = false) {
+        $requestEntity = new RequestEntity;
+        if($post) {
+            $requestEntity->uri = $this->_url . $method;
+            $requestEntity->data = json_encode($content);
+        } else {
+            $requestEntity->uri = $this->_url . $method . '/?' . http_build_query($content);
+            $requestEntity->data = $content;
+        }
+        $requestEntity->headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->_token,
+            'Host' => 'edge.qiwi.com',
+        ];
+
+        $responseEntity = RestHelper::sendRequest($requestEntity);
+        $body = $responseEntity->data;
+
+        //d($body);
+
+        if(!empty($body['traceId'])) {
+            //d($body);
+            $this->showError($body);
+        }
+
+        return $body;
+    }
+
 	private function sendRequest($method, array $content = [], $post = false) {
 		$ch = curl_init();
 		if($post) {
@@ -62,7 +93,7 @@ class Qiwi {
             throw new NotFoundHttpException($body['userMessage']);
         }
         //d($body);
-        throw new ServerErrorHttpException($body['userMessage']);
+        throw new ServerErrorHttpException(json_encode($body, JSON_PRETTY_PRINT));
     }
 
 	private function getCollectionPart($uri, Array $params = []) {
